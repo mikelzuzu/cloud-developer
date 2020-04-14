@@ -45,4 +45,8 @@ export class AuthMenuButtonComponent implements OnInit {
 
   ngOnInit() {}
 
+  getCurrentUser(){
+    return this.auth.currentUser$;
+  }
+
 }
