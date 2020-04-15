@@ -3,7 +3,7 @@ import { filterImageFromURL, validURL, deleteLocalFiles } from '../../../util/ut
 
 const router: Router = Router();
 
-  // > try it {{host}}/cars?filter=make
+  // GET /filteredimage?image_url={{URL}}
   router.get( "/filteredimage", async ( req: Request, res: Response ) => {
     let { image_url } = req.query;
 
