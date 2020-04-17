@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { filterImageFromURL, validURL, deleteLocalFiles } from '../../../util/util';
+import { filterImageFromURL, deleteLocalFiles } from '../../../util/util';
 import path from 'path';
 import fs from 'fs';
 import { config } from '../../../config/config';
