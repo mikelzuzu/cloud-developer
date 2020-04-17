@@ -1,6 +1,10 @@
 import fs from 'fs';
 import Jimp = require('jimp');
 import { reject } from 'bluebird';
+import { config } from '../config/config';
+
+//load the naming convention of the file across the app
+const c = config.image;
 
 // filterImageFromURL
 // helper function to download, filter, and save the filtered image locally
@@ -13,7 +17,7 @@ export async function filterImageFromURL(inputURL: string): Promise<string>{
     return new Promise( async (resolve, reject) => {
         try {
             const photo = await Jimp.read(inputURL);
-            const outpath = '/tmp/filtered.'+Math.floor(Math.random() * 2000)+'.jpg';
+            const outpath = c.subDir + c.imageName + Math.floor(Math.random() * 2000) + c.extension;
             await photo
             .resize(256, 256) // resize
             .quality(60) // set JPEG quality

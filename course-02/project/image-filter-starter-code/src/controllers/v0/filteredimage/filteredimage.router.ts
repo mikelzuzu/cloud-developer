@@ -2,8 +2,12 @@ import { Router, Request, Response } from 'express';
 import { filterImageFromURL, validURL, deleteLocalFiles } from '../../../util/util';
 import path from 'path';
 import fs from 'fs';
+import { config } from '../../../config/config';
 
 const router: Router = Router();
+
+//load the naming convention of the file across the app
+const c = config.image;
 
 // GET /filteredimage?image_url={{URL}}
 router.get("/", async (req: Request, res: Response) => {
@@ -41,14 +45,15 @@ router.get("/", async (req: Request, res: Response) => {
     // finsh -> end -> close
     res.on('close', function () {
         console.debug('About to close the conection, starting removing images');
-        const relativeDir = path.join(__dirname + '../../../../util/tmp/');
+        const relativeDir = path.join(__dirname + '../../../../util' + c.subDir);
         console.debug("Path from where images has being removed: " + relativeDir);
 
         fs.readdir(relativeDir, { withFileTypes: true }, (err, files) => {
             if (err) {
                 return console.log("Unable to scan the image directory: " + err);
             }
-            const images =files.filter(item => item.isFile).map(item => path.join(relativeDir + item.name));
+            const images =files.filter(item => item.isFile).filter(item => item.name.startsWith(c.imageName)&& item.name.endsWith(c.extension))
+                                .map(item => path.join(relativeDir + item.name));
             console.log(images);
 
             deleteLocalFiles(images);
