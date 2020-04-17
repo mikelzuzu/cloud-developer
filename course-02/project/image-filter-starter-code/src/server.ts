@@ -2,6 +2,7 @@ import express, { Router, Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import {filterImageFromURL, deleteLocalFiles} from './util/util';
 import { config } from './config/config';
+import { IndexRouter } from './controllers/v0/index.router';
 
 (async () => {
 
@@ -37,6 +38,8 @@ import { config } from './config/config';
   app.get( "/", async ( req, res ) => {
     res.send(config.app.defaultMessage)
   } );
+
+  app.use('/api/v0/', IndexRouter)
   
 
   // Start the Server
