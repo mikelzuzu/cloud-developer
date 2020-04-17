@@ -3,6 +3,7 @@ import { filterImageFromURL, validURL, deleteLocalFiles } from '../../../util/ut
 import path from 'path';
 import fs from 'fs';
 import { config } from '../../../config/config';
+import isURL from 'validator/lib/isURL'
 
 const router: Router = Router();
 
@@ -18,7 +19,7 @@ router.get("/", async (req: Request, res: Response) => {
     }
 
     //validate the query URL
-    if (!validURL(image_url)) {
+    if (!isURL(image_url)) {
         res.status(400).send('Malformed image URL');
     }
 
@@ -48,13 +49,15 @@ router.get("/", async (req: Request, res: Response) => {
         const relativeDir = path.join(__dirname + '../../../../util' + c.subDir);
         console.debug("Path from where images has being removed: " + relativeDir);
 
+        // I decided to check all directory instead just the filename of the one that it was sent in case there was some error in the past and there are residual file to be removed
         fs.readdir(relativeDir, { withFileTypes: true }, (err, files) => {
             if (err) {
                 return console.log("Unable to scan the image directory: " + err);
             }
+            //just remove the image that we could create following the pattern from config file
             const images =files.filter(item => item.isFile).filter(item => item.name.startsWith(c.imageName)&& item.name.endsWith(c.extension))
                                 .map(item => path.join(relativeDir + item.name));
-            console.log(images);
+            console.debug("images to be removed" + images);
 
             deleteLocalFiles(images);
         });
