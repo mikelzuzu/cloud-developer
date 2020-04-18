@@ -15,12 +15,12 @@ router.get("/", async (req: Request, res: Response) => {
     let { image_url } = req.query;
 
     if (!image_url) {
-        res.status(400).send(`Image URL is required`);
+        return res.status(400).send(`Image URL is required`);
     }
 
     //validate the query URL
     if (!isURL(image_url)) {
-        res.status(400).send('Malformed image URL');
+        return res.status(400).send('Malformed image URL');
     }
 
     const filtered_url = filterImageFromURL(image_url);
@@ -33,12 +33,13 @@ router.get("/", async (req: Request, res: Response) => {
     filtered_url.then(image => {
         res.status(200).sendFile(image, err => {
             if (err) {
+                //do not finish and allow to go to close to check if there is any residual image in the file system
                 res.status(400).send("Error sending back the image");
             }
         });
     }).catch(error => {
         console.error(error);
-        res.status(400).send(error);
+        return res.status(400).send(error);
     });
 
     // deletes any files on the server on finish of the response 
