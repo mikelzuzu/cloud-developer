@@ -7,17 +7,63 @@ const router: Router = Router();
 
 // Get all feed items
 router.get('/', async (req: Request, res: Response) => {
-    const items = await FeedItem.findAndCountAll({order: [['id', 'DESC']]});
-    items.rows.map((item) => {
-            if(item.url) {
-                item.url = AWS.getGetSignedUrl(item.url);
-            }
-    });
+    let { id } = req.query;
+    let items;
+    if (id) {
+        items = await FeedItem.findByPk(id);
+
+        if (!items) {
+            return res.status(404)
+                    .send(`Item not found for given ID`);
+        }
+    } else {
+        items = await FeedItem.findAndCountAll({order: [['id', 'DESC']]});
+        items.rows.map((item) => {
+                if(item.url) {
+                    item.url = AWS.getGetSignedUrl(item.url);
+                }
+        });
+    }
+    
     res.send(items);
 });
 
 //@TODO
 //Add an endpoint to GET a specific resource by Primary Key
+router.get('/:id', async (req: Request, res: Response) => {
+    let { id } = req.params;
+    if (!id) {
+        return res.status(400)
+                .send(`ID is required`);
+    }
+    const item = await FeedItem.findByPk(id);
+
+    if (!item) {
+        return res.status(404)
+                .send(`Item not found for given ID`);
+    }
+
+    res.send(item);
+});
+
+//  try it /feed?id=id
+router.get('/', async (req: Request, res: Response) => {
+    let { id } = req.query;
+
+    if (!id) {
+        return res.status(400)
+                .send(`ID is required`);
+    }
+
+    const item = await FeedItem.findByPk(id);
+
+    if (!item) {
+        return res.status(404)
+                .send(`Item not found for given ID`);
+    }
+
+    res.send(item);
+});
 
 // update a specific resource
 router.patch('/:id', 
