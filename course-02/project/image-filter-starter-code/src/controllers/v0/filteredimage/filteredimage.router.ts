@@ -25,11 +25,6 @@ router.get("/", async (req: Request, res: Response) => {
 
     const filtered_url = filterImageFromURL(image_url);
 
-    /*     filtered_url.catch(error => {
-            console.error(error);
-            res.status(400).send(error);
-        }); */
-
     filtered_url.then(image => {
         res.status(200).sendFile(image, err => {
             if (err) {
