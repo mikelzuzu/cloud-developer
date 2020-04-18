@@ -2,6 +2,7 @@ import fs from 'fs';
 import Jimp = require('jimp');
 import { reject } from 'bluebird';
 import { config } from '../config/config';
+import path from 'path';
 
 //load the naming convention of the file across the app
 const c = config.image;
@@ -17,13 +18,14 @@ export async function filterImageFromURL(inputURL: string): Promise<string>{
     return new Promise( async (resolve, reject) => {
         try {
             const photo = await Jimp.read(inputURL);
-            const outpath = c.subDir + c.imageName + Math.floor(Math.random() * 2000) + c.extension;
+            //One directory up from where utils is.
+            const outpath = path.join(__dirname + "/.." + c.subDir + c.imageName + Math.floor(Math.random() * 2000) + c.extension);
             await photo
             .resize(256, 256) // resize
             .quality(60) // set JPEG quality
             .greyscale() // set greyscale
-            .write(__dirname+outpath, (img)=>{
-                resolve(__dirname+outpath);
+            .write(outpath, (img)=>{
+                resolve(outpath);
             });
         } catch (err) {
             //In case there is an issue with the image, the promise will be rejected

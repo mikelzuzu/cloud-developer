@@ -46,7 +46,7 @@ router.get("/", async (req: Request, res: Response) => {
     // finsh -> end -> close
     res.on('close', function () {
         console.debug('About to close the conection, starting removing images');
-        const relativeDir = path.join(__dirname + '../../../../util' + c.subDir);
+        const relativeDir = path.join(__dirname + '/../../..' + c.subDir);
         console.debug("Path from where images has being removed: " + relativeDir);
 
         // I decided to check all directory instead just the filename of the one that it was sent in case there was some error in the past and there are residual file to be removed
