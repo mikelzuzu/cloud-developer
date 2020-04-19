@@ -7,5 +7,8 @@ export const config = {
       "subDir": "/tmp/",
       "imageName": "filtered.",
       "extension": ".jpg"
+    },
+    "jwt": {
+      "secret": process.env.JWT_SECRET
     }
   }
