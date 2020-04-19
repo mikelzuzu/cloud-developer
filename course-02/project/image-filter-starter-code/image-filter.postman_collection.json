@@ -1,0 +1,133 @@
+{
+	"info": {
+		"_postman_id": "d0c9fb59-2069-4415-ac7a-9da5ee0bd6c5",
+		"name": "image-filter",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "/api/v0/user/auth/login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "5524b249-cd4d-4e75-91c4-b2f690d53d44",
+						"exec": [
+							"// access the JSON response body",
+							"let response = pm.response.json();",
+							"",
+							"//extract token",
+							"let token = response.token;",
+							"",
+							"//store this in environmental value for the next request",
+							"pm.environment.set(\"token\", token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\":\"udacity@gmail.com\",\n\t\"password\":\"udagram1239\"\n}"
+				},
+				"url": {
+					"raw": "http://{{hostRestApi}}/api/v0/users/auth/login",
+					"protocol": "http",
+					"host": [
+						"{{hostRestApi}}"
+					],
+					"path": [
+						"api",
+						"v0",
+						"users",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "api/v0/filteredimage?image_url={{url}}",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{hostImageFilter}}/api/v0/filteredimage?image_url=https://www.telegraph.co.uk/content/dam/news/2019/09/05/TELEMMGLPICT000208424999_trans_NvBQzQNjv4BqR9RRdoohtJOHZ1h3_dBTtHGeDGam_US7aEC3ZIaWb2U.jpeg",
+					"protocol": "http",
+					"host": [
+						"{{hostImageFilter}}"
+					],
+					"path": [
+						"api",
+						"v0",
+						"filteredimage"
+					],
+					"query": [
+						{
+							"key": "image_url",
+							"value": "https://www.telegraph.co.uk/content/dam/news/2019/09/05/TELEMMGLPICT000208424999_trans_NvBQzQNjv4BqR9RRdoohtJOHZ1h3_dBTtHGeDGam_US7aEC3ZIaWb2U.jpeg"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "e0905f61-f494-496d-a440-0fa4af43fbee",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "52722a32-75bf-4a92-bee1-0fc3764eb2ec",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "956ac86b-5ed0-41ba-9ba2-f46b87208610",
+			"key": "hostRestApi",
+			"value": "localhost:8080",
+			"type": "string"
+		},
+		{
+			"id": "996e74bd-31d9-46ca-b5a6-d48d4d854acf",
+			"key": "hostImageFilter",
+			"value": "localhost:8082",
+			"type": "string"
+		}
+	],
+	"protocolProfileBehavior": {}
+}

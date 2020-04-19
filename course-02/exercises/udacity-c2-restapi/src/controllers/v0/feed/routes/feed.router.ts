@@ -46,25 +46,6 @@ router.get('/:id', async (req: Request, res: Response) => {
     res.send(item);
 });
 
-//  try it /feed?id=id
-router.get('/', async (req: Request, res: Response) => {
-    let { id } = req.query;
-
-    if (!id) {
-        return res.status(400)
-                .send(`ID is required`);
-    }
-
-    const item = await FeedItem.findByPk(id);
-
-    if (!item) {
-        return res.status(404)
-                .send(`Item not found for given ID`);
-    }
-
-    res.send(item);
-});
-
 // update a specific resource
 router.patch('/:id', 
     requireAuth, 
