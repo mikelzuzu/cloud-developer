@@ -4,6 +4,7 @@ import path from 'path';
 import fs from 'fs';
 import { config } from '../../../config/config';
 import isURL from 'validator/lib/isURL'
+import { requireAuth } from '../auth';
 
 const router: Router = Router();
 
@@ -11,7 +12,7 @@ const router: Router = Router();
 const c = config.image;
 
 // GET /filteredimage?image_url={{URL}}
-router.get("/", async (req: Request, res: Response) => {
+router.get("/", requireAuth, async (req: Request, res: Response) => {
     let { image_url } = req.query;
 
     if (!image_url) {
