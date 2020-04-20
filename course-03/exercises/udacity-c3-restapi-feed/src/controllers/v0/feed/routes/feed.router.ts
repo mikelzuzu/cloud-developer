@@ -1,32 +1,53 @@
 import { Router, Request, Response } from 'express';
 import { FeedItem } from '../models/FeedItem';
-import { requireAuth } from '../../users/routes/auth.router';
 import * as AWS from '../../../../aws';
 
 const router: Router = Router();
 
 // Get all feed items
 router.get('/', async (req: Request, res: Response) => {
-    const items = await FeedItem.findAndCountAll({order: [['id', 'DESC']]});
-    items.rows.map((item) => {
-            if(item.url) {
-                item.url = AWS.getGetSignedUrl(item.url);
-            }
-    });
+    let { id } = req.query;
+    let items;
+    if (id) {
+        items = await FeedItem.findByPk(id);
+
+        if (!items) {
+            return res.status(404)
+                    .send(`Item not found for given ID`);
+        }
+    } else {
+        items = await FeedItem.findAndCountAll({order: [['id', 'DESC']]});
+        items.rows.map((item) => {
+                if(item.url) {
+                    item.url = AWS.getGetSignedUrl(item.url);
+                }
+        });
+    }
+    
     res.send(items);
 });
 
-// Get a specific resource
-router.get('/:id', 
-    async (req: Request, res: Response) => {
+//@TODO
+//Add an endpoint to GET a specific resource by Primary Key
+router.get('/:id', async (req: Request, res: Response) => {
     let { id } = req.params;
+    if (!id) {
+        return res.status(400)
+                .send(`ID is required`);
+    }
     const item = await FeedItem.findByPk(id);
+
+    if (!item) {
+        return res.status(404)
+                .send(`Item not found for given ID`);
+    }
+
     res.send(item);
 });
 
 // update a specific resource
 router.patch('/:id', 
-    requireAuth, 
+    //requireAuth, 
     async (req: Request, res: Response) => {
         //@TODO try it yourself
         res.send(500).send("not implemented")
@@ -35,7 +56,7 @@ router.patch('/:id',
 
 // Get a signed url to put a new item in the bucket
 router.get('/signed-url/:fileName', 
-    requireAuth, 
+    //requireAuth, 
     async (req: Request, res: Response) => {
     let { fileName } = req.params;
     const url = AWS.getPutSignedUrl(fileName);
@@ -46,7 +67,7 @@ router.get('/signed-url/:fileName',
 // NOTE the file name is they key name in the s3 bucket.
 // body : {caption: string, fileName: string};
 router.post('/', 
-    requireAuth, 
+    //requireAuth, 
     async (req: Request, res: Response) => {
     const caption = req.body.caption;
     const fileName = req.body.url;
