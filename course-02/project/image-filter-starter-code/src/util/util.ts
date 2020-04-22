@@ -29,7 +29,7 @@ export async function filterImageFromURL(inputURL: string): Promise<string>{
             });
         } catch (err) {
             //In case there is an issue with the image, the promise will be rejected
-            reject(`Failed to fetch the image from ${inputURL}. Please provide a publicly accessible valid image`);
+            reject(`Failed to fetch the image from ${inputURL}. Please provide a publicly accessible valid image URL`);
         }
     });
 }
