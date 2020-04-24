@@ -19,7 +19,7 @@ services:
       POSTGRESS_HOST: $POSTGRESS_HOST 
       AWS_REGION: $AWS_REGION 
       AWS_PROFILE: $AWS_PROFILE 
-      AWS_MEDIA_BUKET: $AWS_MEDIA_BUKET
+      AWS_MEDIA_BUCKET: $AWS_MEDIA_BUCKET
       JWT_SECRET: $JWT_SECRET
       URL: "http://localhost:8100"
   backend-feed:
@@ -33,7 +33,7 @@ services:
       POSTGRESS_HOST: $POSTGRESS_HOST 
       AWS_REGION: $AWS_REGION 
       AWS_PROFILE: $AWS_PROFILE 
-      AWS_MEDIA_BUKET: $AWS_MEDIA_BUKET
+      AWS_MEDIA_BUCKET: $AWS_MEDIA_BUCKET
       JWT_SECRET: $JWT_SECRET
       URL: "http://localhost:8100"
   frontend:

@@ -77,3 +77,5 @@ Try adding another column to your tables to save a separate key for your filtere
 #### (ADVANCED) Refactor Data Models
 Try adding a second OpenCV filter script and add an additional parameter to select which filter to use as a POST parameter
 
+Docker command
+docker run --rm --publish 8080:8080 -v $HOME/.aws:/root/.aws --env POSTGRESS_HOST=$POSTGRESS_HOST --env POSTGRESS_USERNAME=$POSTGRESS_USERNAME --env POSTGRESS_PASSWORD=$POSTGRESS_PASSWORD --env POSTGRESS_DATABASE=$POSTGRESS_DATABASE --env AWS_REGION=$AWS_REGION --env AWS_PROFILE=$AWS_PROFILE --env AWS_MEDIA_BUCKET=$AWS_MEDIA_BUCKET --env JWT_SECRET=$JWT_SECRET --name feed mikelzuzu/udacity-restapi-feed
