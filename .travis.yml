@@ -8,10 +8,12 @@ env:
 
 before_install:
     - docker -v && docker-compose -v
+    - sudo ls -l /usr/local/bin/docker-compose
     - sudo rm /usr/local/bin/docker-compose
     - sudo curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
     - sudo chmod +x /usr/local/bin/docker-compose
-    - docker -v && docker-compose -v
+    - sudo ls -l /usr/local/bin/docker-compose
+    - /usr/local/bin/docker-compose -v
     - curl -LO https://storage.googleapis.com/kubernetes-release/release/${K8S_VERSION}/bin/linux/amd64/kubectl
     - chmod +x ./kubectl
     - sudo mv ./kubectl /usr/local/bin/kubectl
