@@ -15,14 +15,15 @@ In this case I used terraform scripts provided by [Kubeone](https://github.com/k
 terraform init
 ```
 **Note:** You need to run this command only the first time before using scripts.
-5. Modify `terraform.tfvars` or `variables.tf` in order to add cluster name, AWS region, instances size and [similar](https://github.com/kubermatic/kubeone/blob/master/examples/terraform/aws/variables.tf).
+5. Modify `terraform.tfvars` or `variables.tf` in order to add cluster name, AWS region, instances size and [similar](https://github.com/kubermatic/kubeone/blob/master/examples/terraform/aws/variables.tf). In my case I just created the `terraform.tfvars` file.
 ```bash
 cluster_name = "udagram-zuzu-dev"
-aws_region = "us-east-1"
+aws_region = "us-east-2"
 ssh_public_key_file = "~/.ssh/k8s_rsa.pub"
 control_plane_volume_size = 30
 worker_type = "t2.micro"
 ```
+**Note:** Remember adding the ssh key to the ssh agent before running kubeone commands: `ssh-add ~/.ssh/k8s_rsa`
 6. Run `terraform plan` to check what will change or create.
 7. Run `terraform apply` to provision the infrastructure.
 

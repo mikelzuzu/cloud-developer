@@ -24,4 +24,10 @@ install:
     - echo $DOCKER_PASSWD | docker login -u $DOCKER_USER --password-stdin
     #Push images
     - docker-compose -f course-03/exercises/udacity-c3-deployment/docker/docker-compose-build.yaml push
-    
+    #Deploy our k8s files (apply will check if there is something to change)
+    # Deploy secrets first
+    - kubectl apply -f course-03/exercises/udacity-c3-deployment/k8s/secrets/sealed/
+    # Deploy the application and config map
+    - kubectl apply -f course-03/exercises/udacity-c3-deployment/k8s/
+    # Deploy the autoscaling configuration
+    - kubectl apply -f course-03/exercises/udacity-c3-deployment/k8s/hpa/
