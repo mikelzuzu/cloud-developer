@@ -3,7 +3,7 @@ language: minimal
 services: docker
 
 env:
-    - DOCKER_COMPOSE_VERSION=1.25.1 K8S_VERSION=v1.16.8
+    - DOCKER_COMPOSE_VERSION=1.25.1 K8S_VERSION=v1.17.5
 
 before_install:
     - docker -v && docker-compose -v
@@ -15,7 +15,7 @@ before_install:
     - curl -LO https://storage.googleapis.com/kubernetes-release/release/${K8S_VERSION}/bin/linux/amd64/kubectl
     - chmod +x ./kubectl
     - sudo mv ./kubectl /usr/local/bin/kubectl
-    - export KUBECONFIG=$PWD/kubeconfig
+    - export KUBECONFIG=$PWD/udagram-zuzu-dev-kubeconfig
 
 install:
     #Build Containers
@@ -24,4 +24,4 @@ install:
     - echo $DOCKER_PASSWD | docker login -u $DOCKER_USER --password-stdin
     #Push images
     - docker-compose -f course-03/exercises/udacity-c3-deployment/docker/docker-compose-build.yaml push
-    #Delete our previous deployment
+    
