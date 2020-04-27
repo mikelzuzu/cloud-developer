@@ -15,14 +15,15 @@ In this case I used terraform scripts provided by [Kubeone](https://github.com/k
 terraform init
 ```
 **Note:** You need to run this command only the first time before using scripts.
-5. Modify `terraform.tfvars` or `variables.tf` in order to add cluster name, AWS region, instances size and [similar](https://github.com/kubermatic/kubeone/blob/master/examples/terraform/aws/variables.tf).
+5. Modify `terraform.tfvars` or `variables.tf` in order to add cluster name, AWS region, instances size and [similar](https://github.com/kubermatic/kubeone/blob/master/examples/terraform/aws/variables.tf). In my case I just created the `terraform.tfvars` file.
 ```bash
 cluster_name = "udagram-zuzu-dev"
-aws_region = "us-east-1"
+aws_region = "us-east-2"
 ssh_public_key_file = "~/.ssh/k8s_rsa.pub"
 control_plane_volume_size = 30
 worker_type = "t2.micro"
 ```
+**Note:** Remember adding the ssh key to the ssh agent before running kubeone commands: `ssh-add ~/.ssh/k8s_rsa`
 6. Run `terraform plan` to check what will change or create.
 7. Run `terraform apply` to provision the infrastructure.
 
@@ -62,7 +63,7 @@ export KUBECONFIG=$PWD/<cluster_name>-kubeconfig
     5. Deploy our application and env variables (secrets including)
     6. Wait until the pods are running
 
-## Zero down time
+## Zero down time with A/B 
 - This is something that kubernetes does out of the box but I added the strategy in the deployments. It is specified that it cannot go to less than replica counts the number of pods so it is allowed to increase in two the number of pods in the updating process. Let's say that if they were two replicas, during the update process it can be increased until for and they should be all the time two pods serving traffic (this example is with the desire 2 number of pods).
 
 ## Autoscaling
@@ -71,3 +72,11 @@ In order to use the horizontal pod autoscaler (hpa) resource, there is a need to
 ```bash
 helm install --namespace kube-system metrics-server stable/metrics-server --set args[0]="--kubelet-insecure-tls"
 ```
+
+## FrontEnd
+It can be access locally with port forward.
+```bash
+kubectl port-forward service/reverseproxy 8080:8080
+kubectl port-forward service/frontend 8100:8100
+```
+And after in the browser go to localhost:8100
