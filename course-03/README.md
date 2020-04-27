@@ -76,6 +76,7 @@ helm install --namespace kube-system metrics-server stable/metrics-server --set 
 ## FrontEnd
 It can be access locally with port forward.
 ```bash
+kubectl port-forward service/reverseproxy 8080:8080
 kubectl port-forward service/frontend 8100:8100
 ```
 And after in the browser go to localhost:8100
