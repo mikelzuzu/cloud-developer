@@ -1,11 +1,19 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
     service: reverseproxy
   name: reverseproxy
 spec:
-  replicas: 1
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+       maxSurge: 2
+       maxUnavailable: 0
+  selector:
+    matchLabels:
+      service: reverseproxy
   template:
     metadata:
       labels:
@@ -25,5 +33,3 @@ spec:
         ports:
         - containerPort: 8080
       restartPolicy: Always
-
-
