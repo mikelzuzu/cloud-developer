@@ -1,0 +1,40 @@
+language: minimal
+
+services: docker
+
+env:
+    - DOCKER_COMPOSE_VERSION=1.25.1 K8S_VERSION=v1.17.5
+
+before_install:
+    - docker -v && docker-compose -v
+    - sudo ls -l /usr/local/bin/docker-compose
+    - sudo rm /usr/local/bin/docker-compose
+    - sudo curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+    - sudo chmod +x /usr/local/bin/docker-compose
+    - docker-compose -v
+    - curl -LO https://storage.googleapis.com/kubernetes-release/release/${K8S_VERSION}/bin/linux/amd64/kubectl
+    - chmod +x ./kubectl
+    - sudo mv ./kubectl /usr/local/bin/kubectl
+    - export KUBECONFIG=$PWD/udagram-zuzu-dev-kubeconfig
+
+install:
+    #Build Containers
+    - docker-compose -f course-03/exercises/udacity-c3-deployment/docker/docker-compose-build.yaml build --parallel
+    #Login to Dockerhub
+    - echo $DOCKER_PASSWD | docker login -u $DOCKER_USER --password-stdin
+    #Push images
+    - docker-compose -f course-03/exercises/udacity-c3-deployment/docker/docker-compose-build.yaml push
+    #Deploy our k8s files (apply will check if there is something to change)
+    # Deploy secrets first
+    - kubectl apply -f course-03/exercises/udacity-c3-deployment/k8s/secrets/sealed/
+    # Deploy the application and config map
+    - kubectl apply -f course-03/exercises/udacity-c3-deployment/k8s/
+    # Deploy the autoscaling configuration
+    - kubectl apply -f course-03/exercises/udacity-c3-deployment/k8s/hpa/
+    # restarting reverseproxy to discover backend with zero downtime
+    - kubectl rollout restart deployment/reverseproxy
+    # Finish the job as success when all the pods are in Running state in the default name-space.
+    ##TODO: Check just our microservices and not all deployed in the namespace
+    - kubectl wait --for=condition=ready pod --all --timeout=500s
+    # Get information about running pods
+    - kubectl get pod --output=wide
