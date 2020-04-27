@@ -3,9 +3,15 @@ kind: Deployment
 metadata:
   labels:
     service: frontend
+    version: v2
   name: frontend
 spec:
   replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+       maxSurge: 2
+       maxUnavailable: 0
   selector:
     matchLabels:
       service: frontend
@@ -13,7 +19,7 @@ spec:
     metadata:
       labels:
         service: frontend
-        api: external        
+        api: external      
     spec:
       containers:
       - image: mikelzuzu/udacity-frontend:local
