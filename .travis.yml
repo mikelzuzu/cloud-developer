@@ -31,6 +31,9 @@ install:
     - kubectl apply -f course-03/exercises/udacity-c3-deployment/k8s/
     # Deploy the autoscaling configuration
     - kubectl apply -f course-03/exercises/udacity-c3-deployment/k8s/hpa/
+    # For now, we delete and deploy reverse proxy to discover the backend in case it is changed
+    - kubectl delete -f course-03/exercises/udacity-c3-deployment/k8s/reverseproxy-deployment.yaml
+    - kubectl apply -f course-03/exercises/udacity-c3-deployment/k8s/reverseproxy-deployment.yaml
     # Finish the job as success when all the pods are in Running state in the default name-space.
     ##TODO: Check just our microservices and not all deployed in the namespace
     - kubectl wait --for=condition=ready pod --all --timeout=300s
