@@ -63,7 +63,7 @@ export KUBECONFIG=$PWD/<cluster_name>-kubeconfig
     5. Deploy our application and env variables (secrets including)
     6. Wait until the pods are running
 
-## Zero down time
+## Zero down time with A/B 
 - This is something that kubernetes does out of the box but I added the strategy in the deployments. It is specified that it cannot go to less than replica counts the number of pods so it is allowed to increase in two the number of pods in the updating process. Let's say that if they were two replicas, during the update process it can be increased until for and they should be all the time two pods serving traffic (this example is with the desire 2 number of pods).
 
 ## Autoscaling
@@ -72,3 +72,10 @@ In order to use the horizontal pod autoscaler (hpa) resource, there is a need to
 ```bash
 helm install --namespace kube-system metrics-server stable/metrics-server --set args[0]="--kubelet-insecure-tls"
 ```
+
+## FrontEnd
+It can be access locally with port forward.
+```bash
+kubectl port-forward service/frontend 8100:8100
+```
+And after in the browser go to localhost:8100
