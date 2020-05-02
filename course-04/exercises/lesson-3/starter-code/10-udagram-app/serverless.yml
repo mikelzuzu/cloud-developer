@@ -30,7 +30,9 @@ provider:
     minimumCompressionSize: 1024 # Enable gzip compression for responses > 1 KB
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
-
+    GROUPS_TABLE: Groups-${self:provider.stage}
+    IMAGES_TABLE: Images-${self:provider.stage}
+    
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'eu-west-1'}
 
@@ -51,8 +53,7 @@ provider:
         - dynamodb:Query
       Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.IMAGES_TABLE}/index/${self:provider.environment.IMAGE_ID_INDEX}
 
-  environment:
-    GROUPS_TABLE: Groups-${self:provider.stage}
+  
 
 functions:
 
@@ -78,6 +79,13 @@ functions:
             requestModels:
               'application/json': GroupRequest
 
+  GetImages:
+    handler: src/lambda/http/getImages.handler
+    events:
+      - http:
+          method: get
+          path: groups/{groupId}/images
+          cors: true
 
 resources:
   Resources:
