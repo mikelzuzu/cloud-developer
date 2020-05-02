@@ -32,6 +32,7 @@ provider:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
     GROUPS_TABLE: Groups-${self:provider.stage}
     IMAGES_TABLE: Images-${self:provider.stage}
+    IMAGE_ID_INDEX: ImageIdIndex
     
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'eu-west-1'}
@@ -102,6 +103,7 @@ resources:
           ReadCapacityUnits: 5
           WriteCapacityUnits: 5
         TableName: ${self:provider.environment.GROUPS_TABLE}
+
     RequestBodyValidator:
       Type: AWS::ApiGateway::RequestValidator
       Properties:
@@ -126,10 +128,6 @@ resources:
             KeyType: HASH
           - AttributeName: timestamp
             KeyType: RANGE
-        ProvisionedThroughput:
-          ReadCapacityUnits: 5
-          WriteCapacityUnits: 5
-        TableName: ${self:provider.environment.IMAGES_TABLE}
         GlobalSecondaryIndexes:
           - IndexName: ${self:provider.environment.IMAGE_ID_INDEX}
             KeySchema:
@@ -137,3 +135,8 @@ resources:
               KeyType: HASH
             Projection:
               ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+        TableName: ${self:provider.environment.IMAGES_TABLE}
+        
