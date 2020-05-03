@@ -15,6 +15,9 @@ custom:
       - name: GroupRequest
         contentType: application/json
         schema: ${file(models/create-group-request.json)}
+      - name: ImageRequest
+        contentType: application/json
+        schema: ${file(models/create-image-request.json)}
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
@@ -79,6 +82,20 @@ functions:
             description: Create a new group
             requestModels:
               'application/json': GroupRequest
+
+  CreateImage:
+    handler: src/lambda/http/createImage.handler
+    events:
+      - http:
+          method: post
+          path: groups/{groupId}/images
+          cors: true
+          reqValidatorName: RequestBodyValidator
+          documentation:
+            summary: Create a new image
+            description: Create a new image
+            requestModels:
+              'application/json': ImageRequest
 
   GetImages:
     handler: src/lambda/http/getImages.handler
