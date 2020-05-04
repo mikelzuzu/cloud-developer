@@ -39,9 +39,10 @@ provider:
     GROUPS_TABLE: Groups-${self:provider.stage}
     IMAGES_TABLE: Images-${self:provider.stage}
     IMAGE_ID_INDEX: ImageIdIndex
-    IMAGE_S3_BUCKET: serverless-udagram-images-${self:provider.stage}
+    IMAGES_S3_BUCKET: serverless-udagram-images-zuzu-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
     CONNECTIONS_TABLE: Connections-${self:provider.stage}
+    THUMBNAILS_S3_BUCKET: serverless-udagram-thumbnail-zuzu-${self:provider.stage}
     
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'eu-west-1'}
@@ -73,6 +74,10 @@ provider:
         - dynamodb:PutItem
         - dynamodb:DeleteItem
       Resource: arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.CONNECTIONS_TABLE}
+    - Effect: Allow
+      Action:
+        - s3:PutObject
+      Resource: "arn:aws:s3:::${self:provider.environment.THUMBNAILS_S3_BUCKET}/*"
 
   
 
@@ -86,8 +91,8 @@ functions:
           path: groups
           cors: true
 
-  CreateGroups:
-    handler: src/lambda/http/createGroups.handler
+  CreateGroup:
+    handler: src/lambda/http/createGroup.handler
     events:
       - http:
           method: post
@@ -159,6 +164,18 @@ functions:
   #     - stream:
   #         type: dynamodb
   #         arn: !GetAtt ImagesDynamoDBTable.StreamArn
+  ResizeImage:
+    handler: src/lambda/s3/resizeImage.handler
+    events:
+      - sns:
+          arn:
+            Fn::Join:
+              - ':'
+              - - arn:aws:sns
+                - Ref: AWS::Region
+                - Ref: AWS::AccountId
+                - ${self:custom.topicName}
+          topicName: ${self:custom.topicName}
 
 resources:
   Resources:
@@ -215,6 +232,8 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+        StreamSpecification:
+          StreamViewType: NEW_IMAGE
         TableName: ${self:provider.environment.IMAGES_TABLE}
 
     AttachmentsBucket:
@@ -280,4 +299,49 @@ resources:
     #             AWS: '*'
     #           Action: 'es:*'
     #           Resource: '*'
+
+    WebSocketConnectionsDynamoDBTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: id
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:provider.environment.CONNECTIONS_TABLE}
+
+    SNSTopicPolicy:
+      Type: AWS::SNS::TopicPolicy
+      Properties:
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal:
+                AWS: "*"
+              Action: sns:Publish
+              Resource:
+                !Ref ImagesTopic
+              Condition:
+                ArnLike:
+                  AWS:SourceArn: arn:aws:s3:::${self:provider.environment.IMAGES_S3_BUCKET}
+        Topics:
+          - !Ref ImagesTopic
+
+    ImagesTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        DisplayName: Image bucket topic
+        TopicName: ${self:custom.topicName}
+
+    ThumbnailsBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:provider.environment.THUMBNAILS_S3_BUCKET}
         
