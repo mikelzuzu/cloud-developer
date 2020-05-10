@@ -16,7 +16,7 @@ export class TodoAccess {
   }
 
   async getAllTodos(): Promise<TodoItem[]> {
-    logger.log('Getting all todos')
+    logger.info("Getting all todos")
 
     const result = await this.docClient.scan({
       TableName: this.todosTable
@@ -27,7 +27,7 @@ export class TodoAccess {
   }
 
   async getTodosFromUser(userId: string): Promise<TodoItem[]> {
-    logger.log('Getting all todos from user: %s', userId)
+    logger.info('Getting all todos from user: %s', userId)
 
     const result = await this.docClient.scan({
       TableName: this.todosTable,
@@ -43,7 +43,7 @@ export class TodoAccess {
   }
 
   async getTodoFromUser(todoId: string, userId: string): Promise<TodoItem> {
-    logger.log('Getting the todo %s from user: %s', todoId,  userId)
+    logger.info('Getting the todo %s from user: %s', todoId,  userId)
 
     //TODO: convert to get
     const result = await this.docClient.query({
@@ -67,7 +67,7 @@ export class TodoAccess {
   }
 
   async createTodo(todo: TodoItem): Promise<TodoItem> {
-    logger.log('Creating todo from user: %s', todo.userId)
+    logger.info('Creating todo from user: %s', todo.userId)
     await this.docClient.put({
       TableName: this.todosTable,
       Item: todo
@@ -96,7 +96,7 @@ export class TodoAccess {
         logger.error('Todo not updated', error.message);
         throw error
     }
-    logger.log('Todo updated!')
+    logger.info('Todo updated!')
   }
 
   async deleteTodo(todoId: string, userId: string): Promise<void> {
@@ -112,17 +112,17 @@ export class TodoAccess {
         }
         }).promise()
     } catch(error) {
-        logger.log('Todo not deleted', error.message);
+        logger.error('Todo not deleted', error.message);
         throw error
     }
-    logger.log('Todo deleted!')
+    logger.info('Todo deleted!')
     
   }
 }
 
 function createDynamoDBClient() {
   if (process.env.IS_OFFLINE) {
-    console.log('Creating a local DynamoDB instance')
+    logger.info('Creating a local DynamoDB instance')
     return new XAWS.DynamoDB.DocumentClient({
       region: 'localhost',
       endpoint: 'http://localhost:8000'
