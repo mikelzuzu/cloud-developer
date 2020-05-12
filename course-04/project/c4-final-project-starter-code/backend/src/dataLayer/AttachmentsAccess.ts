@@ -15,25 +15,30 @@ export class AttachmentAccess {
   }
 
   getAttachmentUploadUrl(todoId: string) {
+    logger.info('Creating a presigned url in S3')
+    logger.info(this.bucketName)
+    logger.info(this.urlExpiration)
+    logger.info(todoId)
     return this.s3.getSignedUrl('putObject', {
       Bucket: this.bucketName,
       Key: todoId,
-      Expires: this.urlExpiration
+      Expires: isNaN(this.urlExpiration as any) ? 100 : +this.urlExpiration
     })
   }
 }
 
 function createS3Client() {
   if (process.env.IS_OFFLINE) {
-    logger.log('Creating a local S3 instance')
+    logger.info('Creating a local S3 instance')
     return new XAWS.S3({
       s3ForcePathStyle: true,
       accessKeyId: 'S3RVER', // This specific key is required when working offline
       secretAccessKey: 'S3RVER',
-      endpoint: 'http://localhost:8000',
+      endpoint: 'http://localhost:8001',
     })
   }
 
+  logger.info('Creating an S3 instance')
   return new XAWS.S3({
     signatureVersion: 'v4'
   })
