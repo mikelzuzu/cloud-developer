@@ -19,12 +19,14 @@ export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGat
   const userId = getUserId(event)
 
   // TODO: Implement creating a new TODO item
-  const newItem = createTodo(newTodo, userId)
+  const newItem = await createTodo(newTodo, userId)
+  //delete userId in the return for security
+  delete newItem.userId
 
   return {
     statusCode: 201,
     body: JSON.stringify({
-      newItem: newItem
+      newItem
     })
   }
 })

@@ -15,6 +15,8 @@ export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGat
 
   const userId = getUserId(event)
   const items = await getTodosFromUser(userId)
+  //delete userId in the todos list for security
+  items.forEach(todo => delete todo.userId)
 
   return {
     statusCode: 200,
