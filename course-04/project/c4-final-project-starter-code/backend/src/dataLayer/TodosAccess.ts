@@ -114,6 +114,37 @@ export class TodoAccess {
     logger.info('Todo updated!')
   }
 
+  async updateAttachment(todoId: string, userId: string, createdAt: string, attachmentUrl: string): Promise<void> {
+    logger.info('Updating attachment')
+    try {
+        await this.docClient.update({
+        TableName: this.todosTable,
+        Key: {
+            userId,
+            createdAt
+        },
+        ConditionExpression: "#todoId = :todoId_val",
+        UpdateExpression: 'SET #attachmentUrl = :attachmentUrl_val',
+        ExpressionAttributeValues:{
+            ":todoId_val": todoId,
+            ":attachmentUrl_val": attachmentUrl,
+
+        },
+        ExpressionAttributeNames: {
+          "#todoId": "todoId",
+          "#attachmentUrl": "attachmentUrl"
+        },
+        ReturnValues: "UPDATED_NEW"
+        }).promise()
+          
+    } catch(error) {
+        logger.error('Attachment not updated', error.message);
+        logger.error(error.message);
+        throw error
+    }
+    logger.info('Attachment updated!')
+  }
+
   async deleteTodo(todoId: string, userId: string, createdAt: string): Promise<void> {
     try {
         await this.docClient.delete({
