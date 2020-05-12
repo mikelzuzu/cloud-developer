@@ -11,3 +11,9 @@ export function parseUserId(jwtToken: string): string {
   const decodedJwt = decode(jwtToken) as JwtPayload
   return decodedJwt.sub
 }
+
+export function buildCert(signingKey): string {
+  let cert = signingKey.match(/.{1,64}/g).join('\n')
+  cert = '-----BEGIN CERTIFICATE-----\n' + cert + '\n-----END CERTIFICATE-----';
+  return cert
+}
