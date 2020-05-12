@@ -37,18 +37,20 @@ export async function createTodo(
 }
 
 export async function updateTodo(
-    itemId: string,
+    todoId: string,
+    userId: string,
     updateTodoRequest: UpdateTodoRequest,
-    userId: string
   ): Promise<void> {
-  
+    //need to find creation date of todo item
+    const todo = await todoAccess.getTodoFromUser(todoId, userId)
+
     return await todoAccess.updateTodo({
-      todoId: itemId,
+      todoId: todoId,
       userId: userId,
       name: updateTodoRequest.name,
       dueDate: updateTodoRequest.dueDate,
       done: updateTodoRequest.done,
-      createdAt: new Date().toISOString()
+      createdAt: todo.createdAt
     })
   }
 
@@ -56,6 +58,6 @@ export async function updateTodo(
     todoId: string,
     userId: string
   ): Promise<void> {
-  
-    return await todoAccess.deleteTodo(todoId, userId)
+    const todo = await todoAccess.getTodoFromUser(todoId, userId)
+    return await todoAccess.deleteTodo(todoId, userId, todo.createdAt)
   }
