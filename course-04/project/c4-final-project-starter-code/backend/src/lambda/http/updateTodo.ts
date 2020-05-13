@@ -9,6 +9,7 @@ import { cors } from 'middy/middlewares'
 import { createLogger } from '../../utils/logger'
 import { updateTodo } from '../../businessLogic/todos'
 import { getUserId } from '../utils'
+import HttpException from '../../utils/HttpException'
 
 const logger = createLogger('updateTodo')
 
@@ -29,13 +30,25 @@ export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGat
       body: ''
     }
   } catch (error) {
-    // send back http 404 not found error
-    return {
-      statusCode: 404,
-      body: JSON.stringify({
-        error: error.message
-      })
+    logger.error('Error updating todo.', { errorMessage: error.message})
+    if (error instanceof HttpException){
+      // send back http 404 not found error
+      const exception: HttpException = error
+      return {
+        statusCode: exception.status,
+        body: JSON.stringify({
+          error: exception.message
+        })
+      }
+    } else {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({
+          error: "Internal server error"
+        })
+      }
     }
+    
   }
 })
 

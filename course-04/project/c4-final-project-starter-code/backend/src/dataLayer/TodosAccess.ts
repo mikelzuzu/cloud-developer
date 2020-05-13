@@ -3,6 +3,7 @@ import * as AWS  from 'aws-sdk'
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import { TodoItem } from '../models/TodoItem';
 import { createLogger } from '../utils/logger';
+import TodoNotFoundException from '../utils/TodoNotFoundException';
 
 const AWSXRay = require('aws-xray-sdk');
 const XAWS = AWSXRay.captureAWS(AWS)
@@ -66,7 +67,7 @@ export class TodoAccess {
     const item = result.Items[0]
     if (item === undefined) {
       logger.error('Todo not found')
-      throw new Error('Todo not found')
+      throw new TodoNotFoundException(todoId)
     }
     return item as TodoItem
   }
@@ -139,7 +140,6 @@ export class TodoAccess {
           
     } catch(error) {
         logger.error('Attachment not updated', error.message);
-        logger.error(error.message);
         throw error
     }
     logger.info('Attachment updated!')
@@ -160,7 +160,6 @@ export class TodoAccess {
         }).promise()
     } catch(error) {
         logger.error('Todo not deleted', error.message);
-        logger.error(error.message)
         throw error
     }
     logger.info('Todo deleted!')

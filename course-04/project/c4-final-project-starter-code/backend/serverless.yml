@@ -67,10 +67,6 @@ provider:
     TODOS_S3_BUCKET: serverless-todos-attachements-zuzu-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
     JWKS_URL: https://dev-zuzu.eu.auth0.com/.well-known/jwks.json
-    IS_OFFLINE: ${env:OFFLINE}
-    DISABLE_XRAY_TRACING: 1
-    AWS_XRAY_LOG_LEVEL: silent
-    AWS_XRAY_CONTEXT_MISSING: LOG_ERROR
   
   iamRoleStatements:
     - Effect: "Allow" # xray permissions (required)
