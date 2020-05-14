@@ -25,11 +25,12 @@ export class TodoAccess {
     }).promise()
 
     const items = result.Items
+    logger.debug("List of Todos", { Todos:items })
     return items as TodoItem[]
   }
 
   async getTodosFromUser(userId: string): Promise<TodoItem[]> {
-    logger.info('Getting all todos from user: ', userId)
+    logger.info(`Getting all todos from user: ${userId}`)
 
     const result = await this.docClient.scan({
       TableName: this.todosTable,
@@ -41,11 +42,12 @@ export class TodoAccess {
     }).promise()
 
     const items = result.Items
+    logger.debug(`List of Todos for the user ${userId}`, { Todos:items })
     return items as TodoItem[]
   }
 
   async getTodoFromUser(todoId: string, userId: string): Promise<TodoItem> {
-    logger.info('Getting the todo ' + todoId + ' from user: ' +  userId)
+    logger.info(`Getting the todo ${todoId} from user: ${userId}`)
 
     //TODO: convert to get
     const result = await this.docClient.query({
@@ -66,23 +68,25 @@ export class TodoAccess {
 
     const item = result.Items[0]
     if (item === undefined) {
-      logger.error('Todo not found')
+      logger.error(`Todo not found with id ${todoId}`)
       throw new TodoNotFoundException(todoId)
     }
+    logger.debug(`Todo for the user ${userId}`, { Todo:item })
     return item as TodoItem
   }
 
   async createTodo(todo: TodoItem): Promise<TodoItem> {
-    logger.info("Creating todo from user: " + todo.userId)
+    logger.info(`Creating todo from user: ${todo.userId}`)
     await this.docClient.put({
       TableName: this.todosTable,
       Item: todo
     }).promise()
+    logger.debug(`Todo created user: ${todo.userId}`, { Todo:todo})
     return todo    
   }
 
   async updateTodo(todo: TodoItem): Promise<void> {
-    logger.info('Todo for updating')
+    logger.info('Todo for updating', { TodoItem:todo })
     try {
         await this.docClient.update({
         TableName: this.todosTable,
@@ -108,15 +112,14 @@ export class TodoAccess {
         }).promise()
           
     } catch(error) {
-        logger.error('Todo not updated', error.message);
-        logger.error(error.message);
+        logger.error('Todo not updated', { error:error.message} );
         throw error
     }
-    logger.info('Todo updated!')
+    logger.debug('Todo updated!')
   }
 
   async updateAttachment(todoId: string, userId: string, createdAt: string, attachmentUrl: string): Promise<void> {
-    logger.info('Updating attachment')
+    logger.info(`Updating attachment for Todo with id ${todoId}`)
     try {
         await this.docClient.update({
         TableName: this.todosTable,
@@ -139,13 +142,14 @@ export class TodoAccess {
         }).promise()
           
     } catch(error) {
-        logger.error('Attachment not updated', error.message);
+        logger.error('Attachment not updated', { error:error.message});
         throw error
     }
-    logger.info('Attachment updated!')
+    logger.debug('Attachment updated!')
   }
 
   async deleteTodo(todoId: string, userId: string, createdAt: string): Promise<void> {
+    logger.info(`Deleting Todo with id ${todoId}`)
     try {
         await this.docClient.delete({
         TableName: this.todosTable,
@@ -159,10 +163,10 @@ export class TodoAccess {
         }
         }).promise()
     } catch(error) {
-        logger.error('Todo not deleted', error.message);
+        logger.error('Todo not deleted', { error:error.message});
         throw error
     }
-    logger.info('Todo deleted!')
+    logger.debug('Todo deleted!')
     
   }
 }

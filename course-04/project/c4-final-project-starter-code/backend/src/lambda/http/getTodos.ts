@@ -10,19 +10,30 @@ import { cors } from 'middy/middlewares'
 const logger = createLogger('getTodos')
 
 export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  // TODO: Get all TODO items for a current user
+
   logger.info('Processing event: ', event)
 
   const userId = getUserId(event)
-  const items = await getTodosFromUser(userId)
-  //delete userId in the todos list for security
-  items.forEach(todo => delete todo.userId)
-
-  return {
-    statusCode: 200,
-    body: JSON.stringify({
-      items
-    })
+  logger.debug(`Retrieving all Todos for user ${userId}.`)
+  try {
+    const items = await getTodosFromUser(userId)
+    //delete userId in the todos list for security
+    items.forEach(todo => delete todo.userId)
+  
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        items
+      })
+    }
+  } catch(error) {
+    logger.error('Error getting Todos.', { errorMessage: error.message })
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        error: "Internal server error"
+      })
+    }
   }
 })
 

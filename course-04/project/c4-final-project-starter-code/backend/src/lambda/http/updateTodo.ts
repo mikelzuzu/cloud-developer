@@ -19,8 +19,7 @@ export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGat
   const todoId = event.pathParameters.todoId
   const updatedTodo: UpdateTodoRequest = JSON.parse(event.body)
   const userId = getUserId(event)
-
-  // TODO: Update a TODO item with the provided id using values in the "updatedTodo" object
+  logger.debug(`Updating  Todo with id ${todoId} for user ${userId}.`, { UpdateTodoRequest:updateTodo  })
   try {
     await updateTodo(todoId, userId, updatedTodo)
     //HTTP 200 or HTTP 204 should imply "resource updated successfully"

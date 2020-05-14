@@ -19,10 +19,10 @@ const jwksUrl = process.env.JWKS_URL
 export const handler = async (
   event: CustomAuthorizerEvent
 ): Promise<CustomAuthorizerResult> => {
-  logger.info('Authorizing a user', event.authorizationToken)
+  logger.info('Authorizing a user', { authorizationToken:event.authorizationToken} )
   try {
     const jwtToken = await verifyToken(event.authorizationToken)
-    logger.info('User was authorized', jwtToken)
+    logger.debug('User was authorized', { jwtToken:jwtToken })
 
     return {
       principalId: jwtToken.sub,

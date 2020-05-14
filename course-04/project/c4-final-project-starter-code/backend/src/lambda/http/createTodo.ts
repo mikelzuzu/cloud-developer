@@ -13,15 +13,17 @@ import { createTodo } from '../../businessLogic/todos'
 const logger = createLogger('createTodo')
 
 export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  logger.info('Processing event: ', event)
+  logger.info('Processing event: ', { event: event })
 
   const newTodo: CreateTodoRequest = JSON.parse(event.body)
   const userId = getUserId(event)
 
-  // TODO: Implement creating a new TODO item
+  logger.debug(`Starting creating Todo for user ${userId}.`, { CreateTodoRequest:newTodo })
   const newItem = await createTodo(newTodo, userId)
   //delete userId in the return for security
   delete newItem.userId
+
+  logger.debug('New item was created', { item: newItem })
 
   return {
     statusCode: 201,

@@ -12,14 +12,13 @@ import HttpException from '../../utils/HttpException'
 const logger = createLogger('deleteTodo')
 
 export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  logger.info('Processing event: ', event)
+  logger.info('Processing event: ', { event: event })
   
   const todoId = event.pathParameters.todoId
 
-  // TODO: Remove a TODO item by id
-
   const userId = getUserId(event)
 
+  logger.debug(`Starting deleting Todo with id: ${todoId} for user ${userId}.`)
   try {
     await deleteTodo(todoId, userId)
     //HTTP 200 or HTTP 204 should imply "resource deleted successfully"
