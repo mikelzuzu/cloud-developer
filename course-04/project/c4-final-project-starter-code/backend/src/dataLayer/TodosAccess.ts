@@ -17,6 +17,7 @@ export class TodoAccess {
     private readonly todosIndex = process.env.TODOS_INDEX) {
   }
 
+  //This is not needed for this project
   async getAllTodos(): Promise<TodoItem[]> {
     logger.info("Getting all todos")
 
@@ -29,17 +30,32 @@ export class TodoAccess {
     return items as TodoItem[]
   }
 
+
   async getTodosFromUser(userId: string): Promise<TodoItem[]> {
     logger.info(`Getting all todos from user: ${userId}`)
 
-    const result = await this.docClient.scan({
+    // const result = await this.docClient.scan({
+    //   TableName: this.todosTable,
+    //   FilterExpression: "#userId = :userId_val",
+    //   ExpressionAttributeNames: {
+    //       "#userId": "userId",
+    //   },
+    //   ExpressionAttributeValues: { ":userId_val": userId }
+    // }).promise()
+    //Change scan for query as it is more efficient in large DBs
+    const result = await this.docClient.query({
       TableName: this.todosTable,
-      FilterExpression: "#userId = :userId_val",
+      IndexName: this.todosIndex,
+      KeyConditionExpression: "#userId = :userId_val",
       ExpressionAttributeNames: {
-          "#userId": "userId",
+          "#userId": "userId"
       },
-      ExpressionAttributeValues: { ":userId_val": userId }
+      ExpressionAttributeValues: { 
+        ":userId_val": userId
+      },
+      ScanIndexForward: false
     }).promise()
+
 
     const items = result.Items
     logger.debug(`List of Todos for the user ${userId}`, { Todos:items })

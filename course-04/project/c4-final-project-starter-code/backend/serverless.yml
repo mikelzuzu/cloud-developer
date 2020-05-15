@@ -11,8 +11,8 @@ plugins:
   - serverless-s3-local
   - serverless-offline
 
-# package:
-#   individually: true
+package:
+  individually: true
 
 custom:
   documentation:
@@ -98,8 +98,8 @@ functions:
     iamRoleStatements:
       - Effect: Allow
         Action:
-          - dynamodb:Scan
-        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}/index/${self:provider.environment.TODOS_INDEX}
     iamRoleStatementsInherit: true
     deploymentSettings:
       type: Linear10PercentEvery1Minute
