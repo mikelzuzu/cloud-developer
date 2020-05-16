@@ -275,3 +275,7 @@ Provide variables for the collection (similarly to how this was done in the cour
 There are request models added with pattern for this project.
 - Name of todo has to be alphanumeric (no special characters are accepted)
 - DueDate has a pattern of YYYY-MM-DD and it start from 1900-01-01. This accepts leap years so we are able to use 2024-02-29 but not 2023-02-29 neither 2024-02-30
+
+# Pagination
+There is a pagination develop for getting the list of todos. If no limit is pass through the query parameters, there is a default limit of 5.
+Unfortunately, the client does not have implemented this option so it will show a maximun of 5 Todos. The is a possibility of using postman (collection can be found in the repo).
