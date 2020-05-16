@@ -7,8 +7,8 @@
         "name": {
             "type": "string",
             "minLength": 1,
-            "pattern": "^[a-zA-Z0-9]+$",
-            "description": "Alphanumeric name of the Todo"
+            "pattern": "^[A-Za-z][a-zA-Z0-9\\_\\-\\s]+$",
+            "description": "Name of the Todo has to start with letter and can be followed by more letters, numbers, whitespaces, hyphen or underscore"
         },
         "dueDate": {
             "type": "string",

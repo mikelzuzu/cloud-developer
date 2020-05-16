@@ -1,6 +1,6 @@
 import * as AWS  from 'aws-sdk'
 //import * as AWSXRay from 'aws-xray-sdk'
-import { DocumentClient } from 'aws-sdk/clients/dynamodb'
+import { DocumentClient, Key } from 'aws-sdk/clients/dynamodb'
 import { TodoItem } from '../models/TodoItem';
 import { createLogger } from '../utils/logger';
 import TodoNotFoundException from '../utils/TodoNotFoundException';
@@ -9,6 +9,9 @@ const AWSXRay = require('aws-xray-sdk');
 const XAWS = AWSXRay.captureAWS(AWS)
 const logger = createLogger('TodosAccess')
 
+/**
+ * Class representing data layer where data about todos is stored (DynamoDB)
+ */
 export class TodoAccess {
 
   constructor(
@@ -17,7 +20,7 @@ export class TodoAccess {
     private readonly todosIndex = process.env.TODOS_INDEX) {
   }
 
-  //This is not needed for this project
+  //This is not needed for this project and it is not exposed in any lambda function
   async getAllTodos(): Promise<TodoItem[]> {
     logger.info("Getting all todos")
 
@@ -26,12 +29,12 @@ export class TodoAccess {
     }).promise()
 
     const items = result.Items
-    logger.debug("List of Todos", { Todos:items })
+    logger.info("List of Todos", { Todos:items })
     return items as TodoItem[]
   }
 
 
-  async getTodosFromUser(userId: string, limit, nextKey): Promise<DocumentClient.QueryOutput> {
+  async getTodosFromUser(userId: string, limit: number, nextKey: Key): Promise<DocumentClient.QueryOutput> {
     logger.info(`Getting all todos from user: ${userId}`)
 
     // const result = await this.docClient.scan({
@@ -59,7 +62,7 @@ export class TodoAccess {
     }).promise()
 
     const items = result.Items
-    logger.debug(`List of Todos for the user ${userId}`, { Todos:items })
+    logger.info(`List of Todos for the user ${userId}`, { Todos:items })
     return result
   }
 
@@ -88,7 +91,7 @@ export class TodoAccess {
       logger.error(`Todo not found with id ${todoId}`)
       throw new TodoNotFoundException(todoId)
     }
-    logger.debug(`Todo for the user ${userId}`, { Todo:item })
+    logger.info(`Todo for the user ${userId}`, { Todo:item })
     return item as TodoItem
   }
 
@@ -98,7 +101,7 @@ export class TodoAccess {
       TableName: this.todosTable,
       Item: todo
     }).promise()
-    logger.debug(`Todo created user: ${todo.userId}`, { Todo:todo})
+    logger.info(`Todo created user: ${todo.userId}`, { Todo:todo})
     return todo    
   }
 
@@ -132,7 +135,7 @@ export class TodoAccess {
         logger.error('Todo not updated', { error:error.message} );
         throw error
     }
-    logger.debug('Todo updated!')
+    logger.info('Todo updated!')
   }
 
   async updateAttachment(todoId: string, userId: string, createdAt: string, attachmentUrl: string): Promise<void> {
@@ -162,7 +165,7 @@ export class TodoAccess {
         logger.error('Attachment not updated', { error:error.message});
         throw error
     }
-    logger.debug('Attachment updated!')
+    logger.info('Attachment updated!')
   }
 
   async deleteTodo(todoId: string, userId: string, createdAt: string): Promise<void> {
@@ -183,7 +186,7 @@ export class TodoAccess {
         logger.error('Todo not deleted', { error:error.message});
         throw error
     }
-    logger.debug('Todo deleted!')
+    logger.info('Todo deleted!')
     
   }
 }
