@@ -26,7 +26,7 @@ export class TodoAccess {
     }).promise()
 
     const items = result.Items
-    logger.debug("List of Todos", { Todos:items })
+    logger.info("List of Todos", { Todos:items })
     return items as TodoItem[]
   }
 
@@ -59,7 +59,7 @@ export class TodoAccess {
     }).promise()
 
     const items = result.Items
-    logger.debug(`List of Todos for the user ${userId}`, { Todos:items })
+    logger.info(`List of Todos for the user ${userId}`, { Todos:items })
     return result
   }
 
@@ -88,7 +88,7 @@ export class TodoAccess {
       logger.error(`Todo not found with id ${todoId}`)
       throw new TodoNotFoundException(todoId)
     }
-    logger.debug(`Todo for the user ${userId}`, { Todo:item })
+    logger.info(`Todo for the user ${userId}`, { Todo:item })
     return item as TodoItem
   }
 
@@ -98,7 +98,7 @@ export class TodoAccess {
       TableName: this.todosTable,
       Item: todo
     }).promise()
-    logger.debug(`Todo created user: ${todo.userId}`, { Todo:todo})
+    logger.info(`Todo created user: ${todo.userId}`, { Todo:todo})
     return todo    
   }
 
@@ -132,7 +132,7 @@ export class TodoAccess {
         logger.error('Todo not updated', { error:error.message} );
         throw error
     }
-    logger.debug('Todo updated!')
+    logger.info('Todo updated!')
   }
 
   async updateAttachment(todoId: string, userId: string, createdAt: string, attachmentUrl: string): Promise<void> {
@@ -162,7 +162,7 @@ export class TodoAccess {
         logger.error('Attachment not updated', { error:error.message});
         throw error
     }
-    logger.debug('Attachment updated!')
+    logger.info('Attachment updated!')
   }
 
   async deleteTodo(todoId: string, userId: string, createdAt: string): Promise<void> {
@@ -183,7 +183,7 @@ export class TodoAccess {
         logger.error('Todo not deleted', { error:error.message});
         throw error
     }
-    logger.debug('Todo deleted!')
+    logger.info('Todo deleted!')
     
   }
 }
