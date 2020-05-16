@@ -1,10 +1,57 @@
 import 'source-map-support/register'
 
-import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 
-export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+import * as middy from 'middy'
+import { cors } from 'middy/middlewares'
+import { getUserId } from '../utils'
+import { deleteTodo } from '../../businessLogic/todos'
+import { createLogger } from '../../utils/logger'
+import HttpException from '../../utils/HttpException'
+
+const logger = createLogger('deleteTodo')
+
+export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+  logger.info('Processing event: ', { event: event })
+  
   const todoId = event.pathParameters.todoId
 
-  // TODO: Remove a TODO item by id
-  return undefined
-}
+  const userId = getUserId(event)
+
+  logger.debug(`Starting deleting Todo with id: ${todoId} for user ${userId}.`)
+  try {
+    await deleteTodo(todoId, userId)
+    //HTTP 200 or HTTP 204 should imply "resource deleted successfully"
+    //204 (No Content)
+    return {
+      statusCode: 204,
+      body: ''
+    }
+  } catch (error) {
+    logger.error('Error deleting todo.', { errorMessage: error.message})
+    if (error instanceof HttpException){
+      // send back http 404 not found error
+      const exception: HttpException = error
+      return {
+        statusCode: exception.status,
+        body: JSON.stringify({
+          error: exception.message
+        })
+      }
+    } else {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({
+          error: "Internal server error"
+        })
+      }
+    }
+  }
+
+})
+
+handler.use(
+  cors({
+    credentials: true
+  })
+)
