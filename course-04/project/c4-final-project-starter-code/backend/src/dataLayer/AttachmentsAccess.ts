@@ -6,6 +6,9 @@ import { createLogger } from '../utils/logger';
 const XAWS = AWSXRay.captureAWS(AWS)
 const logger = createLogger('AttachmentsAccess')
 
+/**
+ * Class representing data layer where images are stored (S3)
+ */
 export class AttachmentAccess {
 
   constructor(
