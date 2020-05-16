@@ -49,6 +49,19 @@ or export the `KUBECONFIG` environment variable and kubectl will read from there
 ```bash
 export KUBECONFIG=$PWD/<cluster_name>-kubeconfig
 ```
+5. For scaling working nodes:
+```bash
+kubectl get machinedeployments -n kube-system
+```
+Pick one from the list and change the number of replicas. e.g
+```bash
+kubectl --namespace kube-system scale machinedeployment/udagram-zuzu-dev-us-east-2b --replicas=2
+```
+6. Destroying the infrastructure
+```bash
+kubeone reset config.yaml --tfjson tf.json
+terraform destroy
+```
 
 
 ## Travis Configuration
