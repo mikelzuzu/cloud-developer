@@ -4,7 +4,7 @@ import { TodoAccess } from '../dataLayer/TodosAccess'
 import { TodoItem } from '../models/TodoItem'
 import { CreateTodoRequest } from '../requests/CreateTodoRequest'
 import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
-import { DocumentClient } from 'aws-sdk/clients/dynamodb'
+import { DocumentClient, Key } from 'aws-sdk/clients/dynamodb'
 
 const todoAccess = new TodoAccess()
 
@@ -12,7 +12,7 @@ export async function getAllTodos(): Promise<TodoItem[]> {
   return todoAccess.getAllTodos()
 }
 
-export async function getTodosFromUser(userId: string, limit, nextKey): Promise<DocumentClient.QueryOutput> {
+export async function getTodosFromUser(userId: string, limit: number, nextKey: Key): Promise<DocumentClient.QueryOutput> {
   return todoAccess.getTodosFromUser(userId, limit, nextKey)
 }
 

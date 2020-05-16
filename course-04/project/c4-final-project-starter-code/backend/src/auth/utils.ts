@@ -12,7 +12,14 @@ export function parseUserId(jwtToken: string): string {
   return decodedJwt.sub
 }
 
-export function buildCert(signingKey): string {
+/**
+ * Build Cert from signing key (jwk)
+ *
+ * @param {string} signingKey which is the key (JWK)
+ *
+ * @return {string} certificate for verifying the token
+ */
+export function buildCert(signingKey: string): string {
   let cert = signingKey.match(/.{1,64}/g).join('\n')
   cert = '-----BEGIN CERTIFICATE-----\n' + cert + '\n-----END CERTIFICATE-----';
   return cert

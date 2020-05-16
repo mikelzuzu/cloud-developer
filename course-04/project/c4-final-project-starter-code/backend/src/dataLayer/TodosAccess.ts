@@ -1,6 +1,6 @@
 import * as AWS  from 'aws-sdk'
 //import * as AWSXRay from 'aws-xray-sdk'
-import { DocumentClient } from 'aws-sdk/clients/dynamodb'
+import { DocumentClient, Key } from 'aws-sdk/clients/dynamodb'
 import { TodoItem } from '../models/TodoItem';
 import { createLogger } from '../utils/logger';
 import TodoNotFoundException from '../utils/TodoNotFoundException';
@@ -9,6 +9,9 @@ const AWSXRay = require('aws-xray-sdk');
 const XAWS = AWSXRay.captureAWS(AWS)
 const logger = createLogger('TodosAccess')
 
+/**
+ * Class representing data layer where data about todos is stored (DynamoDB)
+ */
 export class TodoAccess {
 
   constructor(
@@ -17,7 +20,7 @@ export class TodoAccess {
     private readonly todosIndex = process.env.TODOS_INDEX) {
   }
 
-  //This is not needed for this project
+  //This is not needed for this project and it is not exposed in any lambda function
   async getAllTodos(): Promise<TodoItem[]> {
     logger.info("Getting all todos")
 
@@ -31,7 +34,7 @@ export class TodoAccess {
   }
 
 
-  async getTodosFromUser(userId: string, limit, nextKey): Promise<DocumentClient.QueryOutput> {
+  async getTodosFromUser(userId: string, limit: number, nextKey: Key): Promise<DocumentClient.QueryOutput> {
     logger.info(`Getting all todos from user: ${userId}`)
 
     // const result = await this.docClient.scan({
