@@ -6,6 +6,81 @@ To implement this project, you need to implement a simple TODO application using
 
 This application will allow creating/removing/updating/fetching TODO items. Each TODO item can optionally have an attachment image. Each user only has access to TODO items that he/she has created.
 
+# How to run the application
+
+## Backend
+
+To deploy an application run the following commands:
+
+```
+cd backend
+npm install
+sls deploy -v
+```
+
+## Frontend
+
+To run a client application first edit the `client/src/config.ts` file to set correct parameters. And then run the following commands:
+
+```
+cd client
+npm install
+npm run start
+```
+
+This should start a development server with the React application that will interact with the serverless TODO application.
+
+# Postman collection
+
+An alternative way to test your API, you can use the Postman collection that contains sample requests. You can find a Postman collection in this project. To import this collection, do the following.
+
+Click on the import button:
+
+![Alt text](images/import-collection-1.png?raw=true "Image 1")
+
+
+Click on the "Choose Files":
+
+![Alt text](images/import-collection-2.png?raw=true "Image 2")
+
+
+Select a file to import:
+
+![Alt text](images/import-collection-3.png?raw=true "Image 3")
+
+
+Right click on the imported collection to set variables for the collection:
+
+![Alt text](images/import-collection-4.png?raw=true "Image 4")
+
+Provide variables for the collection (similarly to how this was done in the course):
+
+![Alt text](images/import-collection-5.png?raw=true "Image 5")
+
+
+# Request Validator
+There are request models added with pattern for this project.
+- Name of the Todo has to start with letter and can be followed by more letters, numbers, whitespaces, hyphens or underscores
+- DueDate has a pattern of YYYY-MM-DD and it start from 1900-01-01. This accepts leap years so we are able to use 2024-02-29 but not 2023-02-29 neither 2024-02-30
+![Alt text](images/invalid-body-request.png?raw=true "Invalid body request")
+
+# Pagination
+There is a pagination develop for getting the list of todos. If no limit is pass through the query parameters, there is a default limit of 5.
+Unfortunately, the client does not have implemented this option so it will show a maximun of 5 Todos. The is a possibility of using postman (collection can be found in the repo).
+`https://{{apiId}}.execute-api.eu-west-1.amazonaws.com/dev/todos?limit=3&nextKey=`
+
+# Elasticsearch 
+The only parameters that I decided to index were todoId, userId, createdAt, dueDate and name. I believe that done and attachmentUrl will be more part of update so better to access from DB.
+![Alt text](images/elasticsearch.png?raw=true "Kibana")
+
+# X-Ray
+This is the graph of the call when using web client and just one call in postman for the invalid body request.
+![Alt text](images/tracing.png?raw=true "X-RAY")
+
+# List of Todos using the client
+![Alt text](images/Todos-List.png?raw=true "TODOS")
+
+
 # TODO items
 
 The application should store TODO items, and each TODO item contains the following fields:
@@ -275,8 +350,17 @@ Provide variables for the collection (similarly to how this was done in the cour
 There are request models added with pattern for this project.
 - Name of the Todo has to start with letter and can be followed by more letters, numbers, whitespaces, hyphens or underscores
 - DueDate has a pattern of YYYY-MM-DD and it start from 1900-01-01. This accepts leap years so we are able to use 2024-02-29 but not 2023-02-29 neither 2024-02-30
+![Alt text](images/invalid-body-request.png?raw=true "Invalid body request")
 
 # Pagination
 There is a pagination develop for getting the list of todos. If no limit is pass through the query parameters, there is a default limit of 5.
 Unfortunately, the client does not have implemented this option so it will show a maximun of 5 Todos. The is a possibility of using postman (collection can be found in the repo).
 `https://{{apiId}}.execute-api.eu-west-1.amazonaws.com/dev/todos?limit=3&nextKey=`
+
+# Elasticsearch 
+The only parameters that I decided to index were todoId, userId, createdAt, dueDate and name. I believe that done and attachmentUrl will be more part of update so better to access from DB.
+![Alt text](images/elasticsearch.png?raw=true "Kibana")
+
+# X-Ray
+This is the graph of the call when using web client and just one call in postman for the invalid body request.
+![Alt text](images/tracing.png?raw=true "X-RAY")
