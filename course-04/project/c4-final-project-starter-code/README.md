@@ -273,7 +273,7 @@ Provide variables for the collection (similarly to how this was done in the cour
 
 # Request Validator
 There are request models added with pattern for this project.
-- Name of todo has to be alphanumeric (no special characters are accepted)
+- Name of the Todo has to start with letter and can be followed by more letters, numbers, whitespaces, hyphens or underscores
 - DueDate has a pattern of YYYY-MM-DD and it start from 1900-01-01. This accepts leap years so we are able to use 2024-02-29 but not 2023-02-29 neither 2024-02-30
 
 # Pagination
