@@ -40,7 +40,7 @@ custom:
       port: 8000
       inMemory: true
       migrate: true
-      noStart: true
+      #noStart: true
     stages:
       - dev
 

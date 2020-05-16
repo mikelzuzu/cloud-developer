@@ -269,3 +269,9 @@ Right click on the imported collection to set variables for the collection:
 Provide variables for the collection (similarly to how this was done in the course):
 
 ![Alt text](images/import-collection-5.png?raw=true "Image 5")
+
+
+# Request Validator
+There are request models added with pattern for this project.
+- Name of todo has to be alphanumeric (no special characters are accepted)
+- DueDate has a pattern of YYYY-MM-DD and it start from 1900-01-01. This accepts leap years so we are able to use 2024-02-29 but not 2023-02-29 neither 2024-02-30
