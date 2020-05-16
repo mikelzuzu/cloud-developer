@@ -31,7 +31,7 @@ export class TodoAccess {
   }
 
 
-  async getTodosFromUser(userId: string): Promise<TodoItem[]> {
+  async getTodosFromUser(userId: string, limit, nextKey): Promise<DocumentClient.QueryOutput> {
     logger.info(`Getting all todos from user: ${userId}`)
 
     // const result = await this.docClient.scan({
@@ -53,13 +53,14 @@ export class TodoAccess {
       ExpressionAttributeValues: { 
         ":userId_val": userId
       },
-      ScanIndexForward: false
+      ScanIndexForward: false,
+      Limit: limit,
+      ExclusiveStartKey: nextKey
     }).promise()
-
 
     const items = result.Items
     logger.debug(`List of Todos for the user ${userId}`, { Todos:items })
-    return items as TodoItem[]
+    return result
   }
 
   async getTodoFromUser(todoId: string, userId: string): Promise<TodoItem> {
